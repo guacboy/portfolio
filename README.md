@@ -22,6 +22,19 @@ backend/    FastAPI app
   app/
     main.py          FastAPI entrypoint, CORS
     core/config.py   settings (pydantic-settings)
+    rag/
+      documents.py   loads + chunks the resume markdown source docs
+      index.py        builds/loads the FAISS index (MiniLM embeddings)
+  scripts/
+    ingest.py        rebuilds the FAISS index from data/resume/
+  data/resume/       source documents for the RAG chatbot (markdown + frontmatter)
+                     gitignored, personal content, not committed
+    about.md
+    skills.md
+    education.md
+    experience/       one file per role
+    projects/          one file per project
+  data/index/        generated FAISS index, gitignored
 ```
 
 ## Running locally
@@ -40,11 +53,20 @@ cd frontend
 bun dev
 ```
 
+### Rebuilding the RAG index
+
+Run after adding/editing anything under `backend/data/resume/`:
+
+```
+cd backend
+.venv\Scripts\python.exe scripts\ingest.py
+```
+
 ## Status
 
 - [x] Monorepo scaffold (frontend + backend)
-- [ ] Resume/project content prepped as source documents
-- [ ] Ingestion pipeline (chunk → embed → FAISS index)
+- [x] Resume/project content prepped as source documents
+- [x] Ingestion pipeline (chunk → embed → FAISS index)
 - [ ] FastAPI RAG endpoint
 - [ ] Qwen2.5-1.5B → GGUF conversion + llama-cpp-python wiring
 - [ ] Railway deployment

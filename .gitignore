@@ -8,6 +8,9 @@ backend/.env
 backend/models/
 backend/data/index/
 
+# Personal resume content, kept private
+backend/data/resume/
+
 # OS
 .DS_Store
 Thumbs.db
