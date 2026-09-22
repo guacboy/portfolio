@@ -1,0 +1,19 @@
+#!/bin/sh
+# Runs the backend test suite before allowing a push. Install once per clone with:
+#   git config core.hooksPath .githooks
+
+repo_root="$(git rev-parse --show-toplevel)"
+backend_dir="$repo_root/backend"
+
+if [ ! -f "$backend_dir/.venv/Scripts/python.exe" ]; then
+    echo "pre-push: backend/.venv not found, skipping tests (set up the venv per README.md)" >&2
+    exit 0
+fi
+
+echo "pre-push: running backend pytest suite..."
+"$backend_dir/.venv/Scripts/python.exe" -m pytest -m "not slow" "$backend_dir"
+
+if [ $? -ne 0 ]; then
+    echo "pre-push: tests failed, push aborted." >&2
+    exit 1
+fi

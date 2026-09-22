@@ -3,6 +3,7 @@ backend/.venv/
 backend/__pycache__/
 backend/**/__pycache__/
 backend/.env
+backend/.pytest_cache/
 
 # Models / vector index (large binaries, don't commit)
 backend/models/
