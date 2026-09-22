@@ -1,0 +1,13 @@
+# Python / backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+
+# Models / vector index (large binaries, don't commit)
+backend/models/
+backend/data/index/
+
+# OS
+.DS_Store
+Thumbs.db
