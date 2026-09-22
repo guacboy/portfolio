@@ -25,6 +25,10 @@ backend/    FastAPI app
     rag/
       documents.py   loads + chunks the resume markdown source docs
       index.py        builds/loads the FAISS index (MiniLM embeddings)
+      llm.py           wraps the local GGUF model via llama-cpp-python
+      chat.py          retrieval + confidence-gating + prompt + generation
+    api/
+      chat.py          POST /chat endpoint
   scripts/
     ingest.py        rebuilds the FAISS index from data/resume/
   data/resume/       source documents for the RAG chatbot (markdown + frontmatter)
@@ -35,6 +39,7 @@ backend/    FastAPI app
     experience/       one file per role
     projects/          one file per project
   data/index/        generated FAISS index, gitignored
+  models/             GGUF model file, gitignored
 ```
 
 ## Running locally
@@ -62,11 +67,27 @@ cd backend
 .venv\Scripts\python.exe scripts\ingest.py
 ```
 
+### Downloading the model
+
+The GGUF model file is gitignored (too large to commit) and needs to be fetched once per machine:
+
+```
+cd backend
+.venv\Scripts\python.exe -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='Qwen/Qwen2.5-1.5B-Instruct-GGUF', filename='qwen2.5-1.5b-instruct-q4_k_m.gguf', local_dir='models')"
+```
+
+Note: `llama-cpp-python` must be installed from the prebuilt CPU wheel index on Windows, plain `pip install llama-cpp-python` fails building from source due to a MAX_PATH issue in the vendored llama.cpp source tree:
+
+```
+pip install llama-cpp-python --prefer-binary --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+```
+
 ## Status
 
 - [x] Monorepo scaffold (frontend + backend)
 - [x] Resume/project content prepped as source documents
 - [x] Ingestion pipeline (chunk → embed → FAISS index)
-- [ ] FastAPI RAG endpoint
-- [ ] Qwen2.5-1.5B → GGUF conversion + llama-cpp-python wiring
+- [x] FastAPI RAG endpoint (`POST /chat`, with retrieval-confidence gating)
+- [x] Qwen2.5-1.5B → GGUF conversion + llama-cpp-python wiring
+- [ ] Frontend chat UI
 - [ ] Railway deployment
